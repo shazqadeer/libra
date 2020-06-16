@@ -1172,16 +1172,10 @@ function {:inline} $Hash_sha2($m: $Memory, $txn: $Transaction, val: $Value): $Va
 }
 
 function $Hash_sha2_core(val: $Value): $Value;
+function $Hash_sha2_core_inv(val: $Value): $Value;
 
-// This says that Hash_sha2 respects isEquals (this would be automatic if we had an
-// extensional theory of arrays and used ==, which has the substitution property
-// for functions).
-axiom (forall v1,v2: $Value :: $Vector_is_well_formed(v1) && $Vector_is_well_formed(v2)
-       && $IsEqual(v1, v2) ==> $IsEqual($Hash_sha2_core(v1), $Hash_sha2_core(v2)));
-
-// This says that Hash_sha2 is an injection
-axiom (forall v1,v2: $Value :: $Vector_is_well_formed(v1) && $Vector_is_well_formed(v2)
-        && $IsEqual($Hash_sha2_core(v1), $Hash_sha2_core(v2)) ==> $IsEqual(v1, v2));
+axiom (forall v1,v2: $Value :: $IsEqual(v1, v2) ==> $Hash_sha2_core(v1) == $Hash_sha2_core(v2));
+axiom (forall v: $Value :: $Hash_sha2_core_inv($Hash_sha2_core(v)) == v);
 
 // This procedure has no body. We want Boogie to just use its requires
 // and ensures properties when verifying code that calls it.
@@ -1197,12 +1191,10 @@ function {:inline} $Hash_sha3($m: $Memory, $txn: $Transaction, val: $Value): $Va
     $Hash_sha3_core(val)
 }
 function $Hash_sha3_core(val: $Value): $Value;
+function $Hash_sha3_core_inv(val: $Value): $Value;
 
-axiom (forall v1,v2: $Value :: $Vector_is_well_formed(v1) && $Vector_is_well_formed(v2)
-       && $IsEqual(v1, v2) ==> $IsEqual($Hash_sha3_core(v1), $Hash_sha3_core(v2)));
-
-axiom (forall v1,v2: $Value :: $Vector_is_well_formed(v1) && $Vector_is_well_formed(v2)
-        && $IsEqual($Hash_sha3_core(v1), $Hash_sha3_core(v2)) ==> $IsEqual(v1, v2));
+axiom (forall v1,v2: $Value :: $IsEqual(v1, v2) ==> $Hash_sha3_core(v1) == $Hash_sha3_core(v2));
+axiom (forall v: $Value :: $Hash_sha3_core_inv($Hash_sha3_core(v)) == v);
 
 procedure $Hash_sha3_256(val: $Value) returns (res: $Value);
 ensures res == $Hash_sha3_core(val);     // returns Hash_sha3 Value

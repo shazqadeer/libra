@@ -71,7 +71,7 @@ module Test {
     }
     spec fun create {
         // To reproduce, put this to true.
-        pragma verify=false;
+        pragma verify=true;
 
         // The next two aborts_if and ensures are correct. However, if they are removed, verification terminates
         // with the expected result.
